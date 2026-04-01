@@ -2,7 +2,7 @@ name: Build the game
 
 on:
   push:
-    branches: [master-dev]
+    branches: [master-dev, master, main]
   workflow_dispatch:
 jobs:
   
