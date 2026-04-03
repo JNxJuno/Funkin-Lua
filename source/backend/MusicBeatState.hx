@@ -3,9 +3,7 @@ package backend;
 import openfl.display.BitmapData;
 import flixel.FlxState;
 import backend.PsychCamera;
-
-@:bitmap("assets/embed/images/ui/cursor.png")
-private class FunkinCursor extends BitmapData {}
+import flixel.FlxG;
 
 class MusicBeatState extends FlxState
 {
@@ -23,6 +21,17 @@ class MusicBeatState extends FlxState
 	private function get_controls()
 	{
 		return Controls.instance;
+	}
+
+	// Hilfsfunktion um den Cursor überall im Spiel zu ändern
+	public static function setCursor(type:String = 'arrow')
+	{
+		var asset:String = 'image_ebf2f6'; // Dein Standard-Pfeil
+		if (type == 'hand') asset = 'image_ebf2fb'; // Deine Hand
+		if (type == 'click') asset = 'image_ebf5a4'; // Dein Finger
+
+		// Lädt das Bild aus assets/shared/images/curserCustom/
+		FlxG.mouse.load(Paths.image('curserCustom/' + asset, 'shared'), 1, 0, 0);
 	}
 
 	#if TOUCH_CONTROLS_ALLOWED
@@ -111,9 +120,11 @@ class MusicBeatState extends FlxState
 	override function create() {
 		currentState = this;
 		var skip:Bool = FlxTransitionableState.skipNextTransOut;
-		// //? Should fix the funkin cursor for good
-		if(!(FlxG.mouse.cursor?.bitmapData is FunkinCursor)) FlxG.mouse.load(new FunkinCursor(0,0));
-		//nvm. too much lag
+
+		// Cursor global initialisieren
+		FlxG.mouse.visible = true;
+		setCursor('arrow'); 
+
 		#if MODS_ALLOWED Mods.updatedOnState = false; #end
 
 		if(!_psychCameraInitialized) initPsychCamera();
@@ -133,14 +144,12 @@ class MusicBeatState extends FlxState
 		FlxG.cameras.reset(camera);
 		FlxG.cameras.setDefaultDrawTarget(camera, true);
 		_psychCameraInitialized = true;
-		//trace('initialized psych camera ' + Sys.cpuTime());
 		return camera;
 	}
 
 	public static var timePassedOnState:Float = 0;
 	override function update(elapsed:Float)
 	{
-		//everyStep();
 		var oldStep:Int = curStep;
 		timePassedOnState += elapsed;
 
@@ -237,7 +246,6 @@ class MusicBeatState extends FlxState
 		FlxTransitionableState.skipNextTransIn = false;
 	}
 
-	// Custom made Trans in
 	public static function startTransition(nextState:FlxState = null)
 	{
 		if(nextState == null)
@@ -272,7 +280,6 @@ class MusicBeatState extends FlxState
 	public var stages:Array<BaseStage> = [];
 	public function beatHit():Void
 	{
-		//trace('Beat: ' + curBeat);
 		stagesFunc(function(stage:BaseStage) {
 			stage.curBeat = curBeat;
 			stage.curDecBeat = curDecBeat;
@@ -282,7 +289,6 @@ class MusicBeatState extends FlxState
 
 	public function sectionHit():Void
 	{
-		//trace('Section: ' + curSection + ', Beat: ' + curBeat + ', Step: ' + curStep);
 		stagesFunc(function(stage:BaseStage) {
 			stage.curSection = curSection;
 			stage.sectionHit();
