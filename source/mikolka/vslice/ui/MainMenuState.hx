@@ -217,7 +217,7 @@ class MainMenuState extends MusicBeatState
 		switch(id)
 		{
 			case 0: MusicBeatState.switchState(new CSTStoryMenuState());
-			case 1: MusicBeatState.switchState(new FreeplayState());
+			case 1: MusicBeatState.switchState(new CustomFreeplayState());
 			case 2: goToOptions();
 			case 3: MusicBeatState.switchState(new CreditsState());
 		}
